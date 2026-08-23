@@ -1,1 +1,529 @@
+* {
+    box-sizing: border-box;
+}
 
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #172033;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* ================= SETUP ================= */
+
+.setup-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.setup-box {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 5px 25px rgba(0,0,0,.08);
+}
+
+.setup-box h1 {
+    margin-top: 0;
+}
+
+
+/* ================= HEADER ================= */
+
+.top-header {
+    background: #1565c0;
+    color: white;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-header h1 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.top-header p {
+    margin: 5px 0 0;
+    opacity: .85;
+}
+
+.profile-button {
+    border: none;
+    background: rgba(255,255,255,.15);
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 20px;
+}
+
+
+/* ================= MAIN ================= */
+
+main {
+    max-width: 800px;
+    margin: auto;
+    padding: 16px;
+    padding-bottom: 90px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+
+/* ================= INPUTS ================= */
+
+input,
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d8dee8;
+    border-radius: 10px;
+    background: white;
+    margin-bottom: 10px;
+}
+
+.search-box {
+    margin-bottom: 15px;
+}
+
+
+/* ================= BUTTONS ================= */
+
+.primary-button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 10px;
+    background: #1565c0;
+    color: white;
+    font-weight: bold;
+}
+
+.secondary-button {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 10px;
+    background: #e8f0fb;
+    color: #1565c0;
+}
+
+.small-primary {
+    border: none;
+    border-radius: 9px;
+    padding: 9px 13px;
+    background: #1565c0;
+    color: white;
+}
+
+.back-button {
+    border: none;
+    background: none;
+    color: #1565c0;
+    padding: 5px 0;
+    margin-bottom: 10px;
+}
+
+
+/* ================= PRODUCT ================= */
+
+.product-card {
+    background: white;
+    padding: 16px;
+    margin-bottom: 10px;
+    border-radius: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.product-card h3 {
+    margin: 0 0 5px;
+}
+
+.product-price {
+    font-weight: bold;
+    color: #1565c0;
+}
+
+.product-info {
+    background: white;
+    padding: 18px;
+    border-radius: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.06);
+}
+
+.remaining-stock {
+    margin: 15px 0;
+    padding: 12px;
+    border-radius: 10px;
+    background: #eef6ff;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.quantity-control button {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 9px;
+    background: #e8f0fb;
+    color: #1565c0;
+    font-size: 20px;
+}
+
+.quantity-control input {
+    width: 90px;
+    text-align: center;
+    margin: 0;
+}
+
+
+/* ================= HEADINGS ================= */
+
+.page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+/* ================= CART ================= */
+
+.cart-item {
+    background: white;
+    padding: 15px;
+    border-radius: 13px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.cart-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cart-controls button {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 8px;
+    background: #edf2f7;
+}
+
+.cart-total-box {
+    background: white;
+    padding: 18px;
+    border-radius: 15px;
+    margin-top: 15px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+
+.cart-total-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 19px;
+}
+
+
+/* ================= SUMMARY ================= */
+
+.summary-box {
+    background: white;
+    padding: 15px;
+    border-radius: 13px;
+    margin: 15px 0;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+
+/* ================= CUSTOMERS ================= */
+
+.customer-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.customer-tab {
+    flex: 1;
+    padding: 11px;
+    border: none;
+    border-radius: 9px;
+    background: #e6ebf2;
+}
+
+.customer-tab.active {
+    background: #1565c0;
+    color: white;
+}
+
+.customer-card {
+    background: white;
+    padding: 15px;
+    border-radius: 13px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.customer-card h3 {
+    margin: 0 0 5px;
+}
+
+
+/* ================= SALES ================= */
+
+.sales-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.sales-summary > div {
+    background: white;
+    padding: 15px;
+    border-radius: 13px;
+}
+
+.sales-summary span {
+    display: block;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.sales-summary strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 21px;
+}
+
+.sale-card {
+    background: white;
+    padding: 15px;
+    border-radius: 13px;
+    margin-bottom: 10px;
+}
+
+.sale-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.sale-items {
+    margin-top: 8px;
+    color: #555;
+    font-size: 14px;
+}
+
+
+/* ================= REPORT ================= */
+
+.report-controls {
+    background: white;
+    padding: 15px;
+    border-radius: 14px;
+    margin-bottom: 15px;
+}
+
+.report-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.report-buttons button {
+    flex: 1;
+}
+
+.report-box {
+    background: white;
+    padding: 15px;
+    border-radius: 14px;
+    overflow-x: auto;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+}
+
+.report-table th,
+.report-table td {
+    padding: 9px;
+    border-bottom: 1px solid #e1e5eb;
+    text-align: left;
+    font-size: 13px;
+}
+
+.report-table th {
+    background: #eef2f7;
+}
+
+.report-total {
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/* ================= NAVIGATION ================= */
+
+.bottom-navigation {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 70px;
+    background: white;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.nav-button {
+    flex: 1;
+    max-width: 150px;
+    border: none;
+    background: white;
+    color: #777;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+.nav-button span {
+    font-size: 11px;
+}
+
+.nav-button.active {
+    color: #1565c0;
+}
+
+
+/* ================= MODAL ================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    z-index: 20;
+}
+
+.modal-box {
+    background: white;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.close-modal {
+    position: absolute;
+    right: 12px;
+    top: 7px;
+    background: none;
+    border: none;
+    font-size: 27px;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (min-width: 700px) {
+
+    #homeProductList {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+}
+
+
+/* ================= PRINT ================= */
+
+@media print {
+
+    body {
+        background: white;
+    }
+
+    .top-header,
+    .bottom-navigation,
+    .report-controls,
+    .report-buttons {
+        display: none !important;
+    }
+
+    main {
+        padding: 0;
+    }
+
+    #reportsPage {
+        display: block !important;
+    }
+
+    .report-box {
+        box-shadow: none;
+    }
+
+}
