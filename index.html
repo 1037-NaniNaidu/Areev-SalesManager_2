@@ -1,1 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1565c0">
 
+    <title>Sales Manager</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- ================= FIRST TIME PROFILE ================= -->
+
+    <section id="setupScreen" class="setup-screen">
+
+        <div class="setup-box">
+
+            <h1>Sales Manager</h1>
+
+            <p>Create your profile to get started.</p>
+
+            <input id="setupName" type="text" placeholder="Name">
+            <input id="setupPhone" type="tel" placeholder="Phone number">
+
+            <input
+                id="setupAge"
+                type="number"
+                placeholder="Age"
+                min="1"
+            >
+
+            <select id="setupGender">
+                <option value="">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">
+                    Prefer not to say
+                </option>
+            </select>
+
+            <button
+                class="primary-button"
+                id="createProfileButton"
+            >
+                Continue
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= MAIN APPLICATION ================= -->
+
+    <section id="mainApp" class="hidden">
+
+        <!-- HEADER -->
+
+        <header class="top-header">
+
+            <div>
+                <h1>Sales Manager</h1>
+
+                <p id="welcomeText">
+                    Welcome
+                </p>
+            </div>
+
+            <button
+                class="profile-button"
+                data-page="profilePage"
+            >
+                👤
+            </button>
+
+        </header>
+
+
+        <!-- ================= PAGES ================= -->
+
+        <main>
+
+            <!-- ================= HOME ================= -->
+
+            <section id="homePage" class="page active">
+
+                <h2>Products</h2>
+
+                <input
+                    id="productSearch"
+                    class="search-box"
+                    type="text"
+                    placeholder="🔎 Search products..."
+                >
+
+                <div id="homeProductList"></div>
+
+            </section>
+
+
+            <!-- ================= PRODUCT DETAILS ================= -->
+
+            <section id="productPage" class="page">
+
+                <button
+                    class="back-button"
+                    data-page="homePage"
+                >
+                    ← Back
+                </button>
+
+                <div id="productDetails"></div>
+
+            </section>
+
+
+            <!-- ================= CART ================= -->
+
+            <section id="cartPage" class="page">
+
+                <div class="page-heading">
+
+                    <h2>Cart 🛒</h2>
+
+                    <span id="cartItemCount">
+                        0 items
+                    </span>
+
+                </div>
+
+                <div id="cartItems"></div>
+
+                <div class="cart-total-box">
+
+                    <div class="cart-total-row">
+
+                        <span>Total</span>
+
+                        <strong id="cartTotal">
+                            ₹0.00
+                        </strong>
+
+                    </div>
+
+                    <button
+                        id="checkoutButton"
+                        class="primary-button"
+                    >
+                        Continue
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= CHECKOUT ================= -->
+
+            <section id="checkoutPage" class="page">
+
+                <button
+                    class="back-button"
+                    data-page="cartPage"
+                >
+                    ← Back to Cart
+                </button>
+
+                <h2>Sale Details</h2>
+
+                <label>Customer</label>
+
+                <select id="checkoutCustomer"></select>
+
+                <button
+                    id="checkoutAddCustomer"
+                    class="secondary-button"
+                >
+                    + Add Customer
+                </button>
+
+                <div
+                    id="checkoutSummary"
+                    class="summary-box"
+                ></div>
+
+                <button
+                    id="completeSaleButton"
+                    class="primary-button"
+                >
+                    Complete Sale
+                </button>
+
+            </section>
+
+
+            <!-- ================= PRODUCTS MANAGEMENT ================= -->
+
+            <section id="productsPage" class="page">
+
+                <div class="page-heading">
+
+                    <h2>Products</h2>
+
+                    <button
+                        id="addProductButton"
+                        class="small-primary"
+                    >
+                        + Add
+                    </button>
+
+                </div>
+
+                <div id="manageProducts"></div>
+
+            </section>
+
+
+            <!-- ================= CUSTOMERS ================= -->
+
+            <section id="customersPage" class="page">
+
+                <div class="page-heading">
+
+                    <h2>Customers</h2>
+
+                    <button
+                        id="addCustomerButton"
+                        class="small-primary"
+                    >
+                        + Add
+                    </button>
+
+                </div>
+
+                <div class="customer-tabs">
+
+                    <button
+                        class="customer-tab active"
+                        data-type="normal"
+                    >
+                        Normal
+                    </button>
+
+                    <button
+                        class="customer-tab"
+                        data-type="account"
+                    >
+                        Regular / Account
+                    </button>
+
+                </div>
+
+                <div id="customerList"></div>
+
+            </section>
+
+
+            <!-- ================= REGULAR CUSTOMER DETAILS ================= -->
+
+            <section
+                id="customerDetailsPage"
+                class="page"
+            >
+
+                <button
+                    class="back-button"
+                    data-page="customersPage"
+                >
+                    ← Back to Customers
+                </button>
+
+                <div id="customerDetails"></div>
+
+            </section>
+
+
+            <!-- ================= SALES ================= -->
+
+            <section id="salesPage" class="page">
+
+                <h2>Sales</h2>
+
+                <div class="sales-summary">
+
+                    <div>
+
+                        <span>Today's Sales</span>
+
+                        <strong id="todaySalesAmount">
+                            ₹0.00
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>Items Sold</span>
+
+                        <strong id="todayItemsSold">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <input
+                    id="salesDate"
+                    type="date"
+                >
+
+                <button
+                    id="showAllSales"
+                    class="secondary-button"
+                >
+                    Show All
+                </button>
+
+                <div id="salesList"></div>
+
+            </section>
+
+
+            <!-- ================= REPORTS ================= -->
+
+            <section id="reportsPage" class="page">
+
+                <h2>Reports & PDF / Print</h2>
+
+                <div class="report-controls">
+
+                    <select id="reportType">
+
+                        <option value="today">
+                            Today's Sales
+                        </option>
+
+                        <option value="date">
+                            Specific Date
+                        </option>
+
+                        <option value="range">
+                            Date Range
+                        </option>
+
+                        <option value="all">
+                            All Sales
+                        </option>
+
+                    </select>
+
+                    <input
+                        id="reportDate"
+                        type="date"
+                    >
+
+                    <div
+                        id="rangeInputs"
+                        class="hidden"
+                    >
+
+                        <input
+                            id="reportFrom"
+                            type="date"
+                        >
+
+                        <input
+                            id="reportTo"
+                            type="date"
+                        >
+
+                    </div>
+
+                    <button
+                        id="generateReport"
+                        class="primary-button"
+                    >
+                        Show Report
+                    </button>
+
+                </div>
+
+                <div id="reportArea"></div>
+
+                <div class="report-buttons">
+
+                    <button
+                        id="printReport"
+                        class="secondary-button"
+                    >
+                        🖨 Print
+                    </button>
+
+                    <button
+                        id="pdfReport"
+                        class="secondary-button"
+                    >
+                        📄 Save as PDF
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= PROFILE ================= -->
+
+            <section id="profilePage" class="page">
+
+                <h2>Profile</h2>
+
+                <input
+                    id="profileName"
+                    type="text"
+                    placeholder="Name"
+                >
+
+                <input
+                    id="profilePhone"
+                    type="tel"
+                    placeholder="Phone number"
+                >
+
+                <input
+                    id="profileAge"
+                    type="number"
+                    placeholder="Age"
+                >
+
+                <select id="profileGender">
+
+                    <option value="">
+                        Select gender
+                    </option>
+
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+
+                    <option value="Prefer not to say">
+                        Prefer not to say
+                    </option>
+
+                </select>
+
+                <button
+                    id="saveProfile"
+                    class="primary-button"
+                >
+                    Save Changes
+                </button>
+
+            </section>
+
+        </main>
+
+
+        <!-- ================= BOTTOM NAVIGATION ================= -->
+
+        <nav class="bottom-navigation">
+
+            <button
+                data-page="homePage"
+                class="nav-button active"
+            >
+                🏠
+                <span>Home</span>
+            </button>
+
+            <button
+                data-page="salesPage"
+                class="nav-button"
+            >
+                💰
+                <span>Sales</span>
+            </button>
+
+            <button
+                data-page="customersPage"
+                class="nav-button"
+            >
+                👥
+                <span>Customers</span>
+            </button>
+
+            <button
+                data-page="productsPage"
+                class="nav-button"
+            >
+                📦
+                <span>Products</span>
+            </button>
+
+            <button
+                data-page="reportsPage"
+                class="nav-button"
+            >
+                📊
+                <span>Reports</span>
+            </button>
+
+        </nav>
+
+    </section>
+
+
+    <!-- ================= MODAL ================= -->
+
+    <div
+        id="modal"
+        class="modal hidden"
+    >
+
+        <div class="modal-box">
+
+            <button
+                id="closeModal"
+                class="close-modal"
+            >
+                ×
+            </button>
+
+            <div id="modalContent"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+  </html>
