@@ -1,1 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563eb">
+  <title>Areev Sales Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>Areev Sales Manager</h1>
+    <p id="welcomeText">Manage your business simply</p>
+  </div>
+  <button class="profile-mini" onclick="showPage('profile')">👤</button>
+</header>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="page active">
+    <div class="page-title">
+      <div>
+        <h2>Dashboard</h2>
+        <p id="todayDate"></p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>Today's Sales</span>
+        <strong id="todayTotal">₹0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Total Sales</span>
+        <strong id="allTimeTotal">₹0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Customers</span>
+        <strong id="customerCount">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Products</span>
+        <strong id="productCount">0</strong>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button onclick="showPage('sale')">➕ New Sale</button>
+      <button onclick="showPage('customers')">👥 Customers</button>
+      <button onclick="showPage('products')">📦 Products</button>
+      <button onclick="showPage('sales')">📊 Sales Report</button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Recent Sales</h3>
+        <button class="text-btn" onclick="showPage('sales')">View All</button>
+      </div>
+      <div id="recentSales"></div>
+    </div>
+  </section>
+
+
+  <!-- CUSTOMERS -->
+  <section id="customers" class="page">
+    <div class="page-title">
+      <div>
+        <h2>Customers</h2>
+        <p>Manage your customers</p>
+      </div>
+      <button class="primary-btn" onclick="openCustomerModal()">+ Add</button>
+    </div>
+
+    <input
+      id="customerSearch"
+      class="search"
+      type="search"
+      placeholder="🔍 Search customers..."
+      oninput="renderCustomers()"
+    >
+
+    <div class="customer-tabs">
+      <button class="tab active" onclick="setCustomerTab('all',this)">All</button>
+      <button class="tab" onclick="setCustomerTab('regular',this)">⭐ Regular</button>
+    </div>
+
+    <div id="customerList"></div>
+  </section>
+
+
+  <!-- PRODUCTS -->
+  <section id="products" class="page">
+    <div class="page-title">
+      <div>
+        <h2>Products</h2>
+        <p>Manage products and stock</p>
+      </div>
+      <button class="primary-btn" onclick="openProductModal()">+ Add</button>
+    </div>
+
+    <input
+      id="productSearch"
+      class="search"
+      type="search"
+      placeholder="🔍 Search products..."
+      oninput="renderProducts()"
+    >
+
+    <div id="productList"></div>
+  </section>
+
+
+  <!-- NEW SALE -->
+  <section id="sale" class="page">
+    <div class="page-title">
+      <div>
+        <h2>New Sale</h2>
+        <p>Create a new sales transaction</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <label>Customer</label>
+      <select id="saleCustomer">
+        <option value="">Walk-in Customer</option>
+      </select>
+    </div>
+
+    <div class="panel">
+      <h3>Add Products</h3>
+
+      <label>Product</label>
+      <select id="saleProduct" onchange="updateSaleProductInfo()">
+        <option value="">Select product</option>
+      </select>
+
+      <div id="saleProductInfo" class="product-info"></div>
+
+      <label>Quantity</label>
+      <input
+        id="saleQuantity"
+        type="number"
+        min="1"
+        value="1"
+        oninput="updateSaleAmount()"
+      >
+
+      <div class="sale-calculation">
+        <span>Price</span>
+        <strong id="salePrice">₹0</strong>
+
+        <span>Total</span>
+        <strong id="saleAmount">₹0</strong>
+      </div>
+
+      <button class="primary-btn full" onclick="addToCart()">
+        Add to Cart
+      </button>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Cart</h3>
+        <span id="cartCount">0 items</span>
+      </div>
+
+      <div id="cartList"></div>
+
+      <div class="cart-total">
+        <span>Total</span>
+        <strong id="cartTotal">₹0</strong>
+      </div>
+
+      <button class="success-btn full" onclick="completeSale()">
+        ✓ Complete Sale
+      </button>
+    </div>
+  </section>
+
+
+  <!-- SALES -->
+  <section id="sales" class="page">
+    <div class="page-title">
+      <div>
+        <h2>Sales Reports</h2>
+        <p>Track all your sales</p>
+      </div>
+      <button class="secondary-btn" onclick="printAllSales()">🖨 Print</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>Today</span>
+        <strong id="reportToday">₹0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>All Time</span>
+        <strong id="reportAll">₹0</strong>
+      </div>
+    </div>
+
+    <input
+      id="salesSearch"
+      class="search"
+      type="search"
+      placeholder="🔍 Search sales..."
+      oninput="renderSales()"
+    >
+
+    <div id="salesList"></div>
+  </section>
+
+
+  <!-- PROFILE -->
+  <section id="profile" class="page">
+    <div class="page-title">
+      <div>
+        <h2>Profile</h2>
+        <p>Your business profile</p>
+      </div>
+    </div>
+
+    <div class="panel profile-panel">
+
+      <div class="avatar" id="profileAvatar">👤</div>
+
+      <label>Business / User Name</label>
+      <input id="profileName" type="text" placeholder="Enter your name">
+
+      <label>Phone Number</label>
+      <input id="profilePhone" type="tel" placeholder="Enter phone number">
+
+      <label>Age</label>
+      <input id="profileAge" type="number" min="1" max="120">
+
+      <label>Gender</label>
+      <select id="profileGender">
+        <option value="">Select</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+
+      <button class="primary-btn full" onclick="saveProfile()">
+        Save Profile
+      </button>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav">
+  <button onclick="showPage('dashboard')" data-page="dashboard">
+    <span>🏠</span>
+    <small>Home</small>
+  </button>
+
+  <button onclick="showPage('customers')" data-page="customers">
+    <span>👥</span>
+    <small>Customers</small>
+  </button>
+
+  <button onclick="showPage('products')" data-page="products">
+    <span>📦</span>
+    <small>Products</small>
+  </button>
+
+  <button onclick="showPage('sale')" data-page="sale">
+    <span>🛒</span>
+    <small>Sale</small>
+  </button>
+
+  <button onclick="showPage('sales')" data-page="sales">
+    <span>📊</span>
+    <small>Reports</small>
+  </button>
+</nav>
+
+
+<!-- CUSTOMER MODAL -->
+<div id="customerModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="customerModalTitle">Add Customer</h3>
+      <button onclick="closeModal('customerModal')">×</button>
+    </div>
+
+    <input type="hidden" id="customerId">
+
+    <label>Customer Name</label>
+    <input id="customerName" type="text" placeholder="Customer name">
+
+    <label>Phone Number</label>
+    <input id="customerPhone" type="tel" placeholder="Phone number">
+
+    <label class="check-row">
+      <input id="customerRegular" type="checkbox">
+      <span>⭐ Regular Customer</span>
+    </label>
+
+    <button class="primary-btn full" onclick="saveCustomer()">
+      Save Customer
+    </button>
+  </div>
+</div>
+
+
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="productModalTitle">Add Product</h3>
+      <button onclick="closeModal('productModal')">×</button>
+    </div>
+
+    <input type="hidden" id="productId">
+
+    <label>Product Name</label>
+    <input id="productName" type="text" placeholder="Product name">
+
+    <label>Selling Price</label>
+    <input id="productPrice" type="number" min="0" step="0.01" placeholder="₹">
+
+    <label>Total Stock</label>
+    <input id="productStock" type="number" min="0" placeholder="Quantity">
+
+    <button class="primary-btn full" onclick="saveProduct()">
+      Save Product
+    </button>
+  </div>
+</div>
+
+
+<!-- CUSTOMER REPORT MODAL -->
+<div id="reportModal" class="modal">
+  <div class="modal-box report-box">
+    <div class="modal-header">
+      <h3 id="reportTitle">Customer Report</h3>
+      <button onclick="closeModal('reportModal')">×</button>
+    </div>
+
+    <div id="customerReport"></div>
+
+    <button class="secondary-btn full" onclick="printCustomerReport()">
+      🖨 Print Customer Report
+    </button>
+  </div>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+                          </html>
 
