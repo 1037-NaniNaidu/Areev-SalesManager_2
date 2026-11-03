@@ -1,1 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1565c0">
+  <title>Areev Sales Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">A</div>
+        <div><strong>Areev</strong><small>Sales Manager</small></div>
+      </div>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-link active" data-view="dashboard"><span>▦</span> Dashboard</button>
+        <button class="nav-link" data-view="products"><span>▣</span> Products</button>
+        <button class="nav-link" data-view="customers"><span>♙</span> Customers</button>
+        <button class="nav-link" data-view="sales"><span>🛒</span> Sales</button>
+        <button class="nav-link" data-view="reports"><span>▤</span> Reports</button>
+        <button class="nav-link" data-view="settings"><span>⚙</span> Settings</button>
+      </nav>
+      <div class="sidebar-note">Manage your business simply.</div>
+    </aside>
 
+    <main class="main-area">
+      <header class="topbar">
+        <button class="menu-button" id="menuButton" aria-label="Toggle menu">☰</button>
+        <div>
+          <div class="eyebrow" id="todayDate"></div>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <button class="profile-chip" id="profileButton" title="Edit business profile">
+          <span class="avatar" id="profileInitial">A</span>
+          <span id="profileName">My Business</span>
+        </button>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="welcome-row">
+          <div><h2>Business overview</h2><p class="muted">A quick look at your business activity.</p></div>
+          <button class="primary" data-go="sales">＋ New sale</button>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><span class="stat-label">Today's sales</span><strong id="statToday">₹0.00</strong><small id="statTodayCount">0 transactions</small></article>
+          <article class="stat-card"><span class="stat-label">Total products</span><strong id="statProducts">0</strong><small>Products in your catalogue</small></article>
+          <article class="stat-card"><span class="stat-label">Customers</span><strong id="statCustomers">0</strong><small>Saved customer profiles</small></article>
+          <article class="stat-card"><span class="stat-label">Stock units left</span><strong id="statStock">0</strong><small>Across all products</small></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Recent sales</h3><p class="muted">Your latest transactions</p></div><button class="text-button" data-go="reports">View reports</button></div>
+            <div id="recentSales" class="table-wrap"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-heading"><div><h3>Low stock</h3><p class="muted">Products with 5 or fewer units</p></div><button class="text-button" data-go="products">View products</button></div>
+            <div id="lowStockList"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-products">
+        <div class="section-heading"><div><h2>Products</h2><p class="muted">Manage your product catalogue and stock.</p></div><button class="primary" id="addProductButton">＋ Add product</button></div>
+        <div class="toolbar"><input id="productSearch" type="search" placeholder="Search products…" aria-label="Search products"></div>
+        <div class="panel table-wrap" id="productsTable"></div>
+      </section>
+
+      <section class="view" id="view-customers">
+        <div class="section-heading"><div><h2>Customers</h2><p class="muted">Keep customer details and purchase history organised.</p></div><button class="primary" id="addCustomerButton">＋ Add customer</button></div>
+        <div class="toolbar"><input id="customerSearch" type="search" placeholder="Search customers…" aria-label="Search customers"></div>
+        <div class="panel table-wrap" id="customersTable"></div>
+      </section>
+
+      <section class="view" id="view-sales">
+        <div class="section-heading"><div><h2>New sale</h2><p class="muted">Create a bill and update stock after confirmation.</p></div></div>
+        <div class="sale-layout">
+          <article class="panel sale-entry">
+            <h3>Add items</h3>
+            <label>Customer
+              <select id="saleCustomer"><option value="">Walk-in customer</option></select>
+            </label>
+            <div class="form-row">
+              <label class="grow">Product<select id="saleProduct"><option value="">Select a product</option></select></label>
+              <label class="quantity-field">Quantity<input id="saleQuantity" type="number" min="1" step="1" value="1"></label>
+            </div>
+            <button class="primary" id="addToCartButton">Add to cart</button>
+            <p class="hint">Only available stock can be added to a sale.</p>
+          </article>
+          <article class="panel cart-panel">
+            <div class="panel-heading"><div><h3>Cart</h3><p class="muted" id="cartCount">0 items</p></div><button class="text-button danger-text" id="clearCartButton">Clear cart</button></div>
+            <div id="cartItems"></div>
+            <div class="cart-total"><span>Total</span><strong id="cartTotal">₹0.00</strong></div>
+            <button class="primary full-width" id="confirmSaleButton" disabled>Confirm sale</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-reports">
+        <div class="section-heading"><div><h2>Reports</h2><p class="muted">Review recorded sales by date and customer.</p></div><button class="secondary" id="exportSalesButton">Download sales CSV</button></div>
+        <div class="report-filters panel">
+          <label>From date<input type="date" id="reportFrom"></label>
+          <label>To date<input type="date" id="reportTo"></label>
+          <label>Customer<select id="reportCustomer"><option value="">All customers</option></select></label>
+          <button class="primary" id="applyReportButton">Apply filters</button>
+        </div>
+        <div class="stats-grid report-stats">
+          <article class="stat-card"><span class="stat-label">Sales total</span><strong id="reportTotal">₹0.00</strong></article>
+          <article class="stat-card"><span class="stat-label">Transactions</span><strong id="reportCount">0</strong></article>
+          <article class="stat-card"><span class="stat-label">Units sold</span><strong id="reportUnits">0</strong></article>
+        </div>
+        <div class="panel table-wrap" id="reportsTable"></div>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="section-heading"><div><h2>Settings & profile</h2><p class="muted">Update your business information and protect your data.</p></div></div>
+        <div class="settings-grid">
+          <form class="panel form-card" id="profileForm">
+            <h3>Business profile</h3>
+            <label>Your name<input id="profileFullName" maxlength="80" placeholder="Your name"></label>
+            <label>Business name<input id="businessName" maxlength="100" placeholder="My Business"></label>
+            <label>Phone number<input id="profilePhone" inputmode="tel" maxlength="20" placeholder="Phone number"></label>
+            <label>Language
+              <select id="profileLanguage"><option value="en">English</option><option value="te">తెలుగు (Telugu)</option><option value="hi">हिन्दी (Hindi)</option></select>
+            </label>
+            <button class="primary" type="submit">Save profile</button>
+          </form>
+          <article class="panel form-card">
+            <h3>Data backup</h3>
+            <p class="muted">Export a backup file and keep it somewhere safe. Importing a backup replaces the current data in this browser.</p>
+            <button class="secondary full-width" id="backupButton">Download backup</button>
+            <label class="file-label">Restore from backup<input type="file" id="restoreInput" accept=".json,application/json"></label>
+            <hr>
+            <h3>Recycle bin</h3>
+            <p class="muted">Deleted products and customers can be restored.</p>
+            <button class="secondary full-width" id="recycleBinButton">Open recycle bin</button>
+            <hr>
+            <p class="hint">This version stores data in this browser on this device. It does not sync automatically to other phones.</p>
+          </article>
+        </div>
+      </section>
+
+      <footer class="app-footer">Areev Sales Manager <span>•</span> Your business, organised.</footer>
+    </main>
+  </div>
+
+  <dialog id="appDialog" class="app-dialog">
+    <form method="dialog" class="dialog-form" id="dialogForm">
+      <div class="dialog-heading"><h2 id="dialogTitle">Details</h2><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+      <div id="dialogContent"></div>
+      <div class="dialog-actions" id="dialogActions"></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+    </html>
