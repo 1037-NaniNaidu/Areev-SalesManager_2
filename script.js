@@ -828,5 +828,468 @@
           s.customerName,
           i.name,
           i.quantity,
+                     i.price,
+          i.lineTotal,
+          s.total
+        ])
+      )
+    );
+
+    const csv = rows
+      .map(row => row.map(csvCell).join(","))
+      .join("\n");
+
+    downloadFile(
+      filename,
+      "\uFEFF" + csv,
+      "text/csv;charset=utf-8"
+    );
+  }
+
+  function downloadReport() {
+    const sales = filteredSales(
+      $("reportFrom").value,
+      $("reportTo").value,
+      $("reportCustomer").value
+    );
+
+    if (!sales.length) {
+      showToast("No sales available for this report.");
+      return;
+    }
+
+    downloadCSV("areev-sales-report.csv", sales);
+    showToast("Report downloaded.");
+  }
+
+  // PROFILE SETTINGS
+
+  function fillProfileForm() {
+    $("profileName").value = data.profile.name || "";
+    $("profileBusiness").value = data.profile.business || "";
+    $("profilePhone").value = data.profile.phone || "";
+    $("profileLanguage").value = data.profile.language || "en";
+  }
+
+  function saveProfile() {
+    data.profile = {
+      name: $("profileName").value.trim(),
+      business: $("profileBusiness").value.trim(),
+      phone: $("profilePhone").value.trim(),
+      language: $("profileLanguage").value
+    };
+
+    if (saveData()) {
+      showToast("Profile saved.");
+    }
+  }
+
+  // RECYCLE BIN
+
+  function moveToRecycleBin(type, id) {
+    const collection = type === "product"
+      ? data.products
+      : data.customers;
+
+    const index = collection.findIndex(item => item.id === id);
+
+    if (index === -1) return;
+
+    const item = collection.splice(index, 1)[0];
+
+    data.recycleBin.push({
+      id: makeId(),
+      type,
+      item,
+      deletedAt: Date.now()
+    });
+
+    if (saveData()) {
+      renderProducts();
+      renderCustomers();
+      renderDashboard();
+      renderSaleForm();
+
+      showToast(
+        type === "product"
+          ? "Product moved to recycle bin."
+          : "Customer moved to recycle bin."
+      );
+    }
+  }
+
+  function openRecycleBin() {
+    const rows = data.recycleBin.map(entry => `
+      <div class="low-stock-item">
+        <div>
+          <strong>${escapeHTML(entry.item.name)}</strong>
+          <small>
+            ${entry.type === "product" ? "Product" : "Customer"}
+          </small>
+        </div>
+
+        <div class="action-group">
+          <button
+            class="small-button"
+            data-restore-bin="${entry.id}"
+          >
+            Restore
+          </button>
+          <button
+            class="small-button delete"
+            data-delete-bin="${entry.id}"
+          >
+            Delete permanently
+          </button>
+        </div>
+      </div>
+    `).join("");
+
+    openDialog(
+      "Recycle bin",
+      data.recycleBin.length
+        ? `<div class="recycle-list">${rows}</div>`
+        : empty("Recycle bin is empty."),
+      `
+        <button
+          class="secondary"
+          type="button"
+          data-dialog-cancel
+        >
+          Close
+        </button>
+        <button
+          class="small-button delete"
+          type="button"
+          id="emptyRecycleBinButton"
+        >
+          Empty bin
+        </button>
+      `
+    );
+
+    $("emptyRecycleBinButton").addEventListener("click", () => {
+      if (!data.recycleBin.length) {
+        showToast("Recycle bin is already empty.");
+        return;
+      }
+
+      data.recycleBin = [];
+
+      if (saveData()) {
+        closeDialog();
+        showToast("Recycle bin emptied.");
+      }
+    });
+  }
+
+  function restoreBin(id) {
+    const index = data.recycleBin.findIndex(
+      entry => entry.id === id
+    );
+
+    if (index === -1) return;
+
+    const entry = data.recycleBin[index];
+
+    if (entry.type === "product") {
+      data.products.push(entry.item);
+    } else if (entry.type === "customer") {
+      data.customers.push(entry.item);
+    }
+
+    data.recycleBin.splice(index, 1);
+
+    if (saveData()) {
+      openRecycleBin();
+      renderProducts();
+      renderCustomers();
+      renderDashboard();
+      renderSaleForm();
+
+      showToast("Item restored.");
+    }
+  }
+
+  function deleteBinItem(id) {
+    data.recycleBin = data.recycleBin.filter(
+      entry => entry.id !== id
+    );
+
+    if (saveData()) {
+      openRecycleBin();
+      showToast("Item permanently deleted.");
+    }
+  }
+
+  // BACKUP AND RESTORE
+
+  function downloadBackup() {
+    const backup = JSON.stringify(data, null, 2);
+
+    downloadFile(
+      `areev-backup-${todayISO()}.json`,
+      backup,
+      "application/json"
+    );
+
+    showToast("Backup downloaded.");
+  }
+
+  function restoreBackup(file) {
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const restored = JSON.parse(reader.result);
+
+        if (
+          !restored ||
+          typeof restored !== "object" ||
+          !Array.isArray(restored.products) ||
+          !Array.isArray(restored.customers) ||
+          !Array.isArray(restored.sales)
+        ) {
+          showToast("This backup file is not valid.");
+          return;
+        }
+
+        const cleanData = {
+          ...defaultData(),
+          ...restored,
+          profile: {
+            ...defaultData().profile,
+            ...(restored.profile || {})
+          },
+          products: restored.products,
+          customers: restored.customers,
+          sales: restored.sales,
+          recycleBin: Array.isArray(restored.recycleBin)
+            ? restored.recycleBin
+            : []
+        };
+
+        data = cleanData;
+
+        if (saveData()) {
+          cart = [];
+
+          renderDashboard();
+          renderProducts();
+          renderCustomers();
+          renderSaleForm();
+          renderReports();
+          fillProfileForm();
+
+          showToast("Backup restored successfully.");
+        }
+      } catch (error) {
+        console.error(error);
+        showToast("Could not read this backup file.");
+      }
+    };
+
+    reader.onerror = () => {
+      showToast("Could not open the backup file.");
+    };
+
+    reader.readAsText(file);
+  }
+
+  // BUTTON AND INPUT EVENTS
+
+  function handleClick(event) {
+    const target = event.target;
+
+    const nav = target.closest("[data-view]");
+    if (nav) {
+      showView(nav.dataset.view);
+      return;
+    }
+
+    if (target.closest("#addProductButton")) {
+      productDialog();
+      return;
+    }
+
+    if (target.closest("#addCustomerButton")) {
+      customerDialog();
+      return;
+    }
+
+    if (target.closest("#addToCartButton")) {
+      addToCart();
+      return;
+    }
+
+    if (target.closest("#confirmSaleButton")) {
+      confirmSale();
+      return;
+    }
+
+    if (target.closest("#downloadReportButton")) {
+      downloadReport();
+      return;
+    }
+
+    if (target.closest("#backupButton")) {
+      downloadBackup();
+      return;
+    }
+
+    if (target.closest("#recycleBinButton")) {
+      openRecycleBin();
+      return;
+    }
+
+    if (target.closest("#menuButton")) {
+      $("sidebar").classList.toggle("open");
+      return;
+    }
+
+    if (target.closest("[data-dialog-cancel]")) {
+      closeDialog();
+      return;
+    }
+
+    const editProduct = target.closest("[data-edit-product]");
+    if (editProduct) {
+      const product = productById(editProduct.dataset.editProduct);
+      if (product) productDialog(product);
+      return;
+    }
+
+    const deleteProduct = target.closest("[data-delete-product]");
+    if (deleteProduct) {
+      moveToRecycleBin("product", deleteProduct.dataset.deleteProduct);
+      return;
+    }
+
+    const editCustomer = target.closest("[data-edit-customer]");
+    if (editCustomer) {
+      const customer = customerById(editCustomer.dataset.editCustomer);
+      if (customer) customerDialog(customer);
+      return;
+    }
+
+    const deleteCustomer = target.closest("[data-delete-customer]");
+    if (deleteCustomer) {
+      moveToRecycleBin("customer", deleteCustomer.dataset.deleteCustomer);
+      return;
+    }
+
+    const customerDetail = target.closest("[data-customer-detail]");
+    if (customerDetail) {
+      showCustomerHistory(customerDetail.dataset.customerDetail);
+      return;
+    }
+
+    const cartPlus = target.closest("[data-cart-plus]");
+    if (cartPlus) {
+      const item = cart.find(
+        i => i.productId === cartPlus.dataset.cartPlus
+      );
+
+      if (!item) return;
+
+      const product = productById(item.productId);
+
+      if (!product || item.quantity >= product.stock) {
+        showToast("No more stock available.");
+        return;
+      }
+
+      item.quantity++;
+      renderCart();
+      return;
+    }
+
+    const cartMinus = target.closest("[data-cart-minus]");
+    if (cartMinus) {
+      const item = cart.find(
+        i => i.productId === cartMinus.dataset.cartMinus
+      );
+
+      if (!item) return;
+
+      item.quantity--;
+
+      if (item.quantity <= 0) {
+        cart = cart.filter(i => i.productId !== item.productId);
+      }
+
+      renderCart();
+      return;
+    }
+
+    const cartRemove = target.closest("[data-cart-remove]");
+    if (cartRemove) {
+      cart = cart.filter(
+        i => i.productId !== cartRemove.dataset.cartRemove
+      );
+
+      renderCart();
+      return;
+    }
+
+    const restore = target.closest("[data-restore-bin]");
+    if (restore) {
+      restoreBin(restore.dataset.restoreBin);
+      return;
+    }
+
+    const deleteBin = target.closest("[data-delete-bin]");
+    if (deleteBin) {
+      deleteBinItem(deleteBin.dataset.deleteBin);
+    }
+  }
+
+  // INITIALISE APP
+
+  function initialiseApp() {
+    document.addEventListener("click", handleClick);
+
+    $("productSearch").addEventListener("input", renderProducts);
+    $("customerSearch").addEventListener("input", renderCustomers);
+
+    $("reportFrom").addEventListener("change", renderReports);
+    $("reportTo").addEventListener("change", renderReports);
+    $("reportCustomer").addEventListener("change", renderReports);
+
+    $("saveProfileButton").addEventListener("click", saveProfile);
+
+    $("restoreInput").addEventListener("change", event => {
+      const file = event.target.files[0];
+
+      if (file) restoreBackup(file);
+
+      event.target.value = "";
+    });
+
+    $("saleCustomer").addEventListener("change", () => {
+      // Keep the selected customer while refreshing the sale form.
+      renderSaleForm();
+    });
+
+    renderDashboard();
+    renderProducts();
+    renderCustomers();
+    renderSaleForm();
+
+    // Set the report date fields to today.
+    $("reportFrom").value = todayISO();
+    $("reportTo").value = todayISO();
+
+    renderReports();
+
+    fillProfileForm();
+    showView("dashboard");
+  }
+
+  document.addEventListener("DOMContentLoaded", initialiseApp);
+
+})();
 
           
